@@ -29,9 +29,11 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
                     secureTextEntry={true}
                     placeholder="Password"
                     placeholderTextColor="#6a6a6a"
-                    style={styles.inputButton} />
+                    style={styles.inputButtonPassword} />
 
-                <TouchableOpacity style={styles.loginButton}>
+                    <TouchableOpacity style={styles.passwordForget}><Text style={{fontWeight:"300", fontSize:12}}>Password Forget?</Text></TouchableOpacity>
+
+                <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('HomePage')}>
                     <Text style={{ color: "white" }}>Connect</Text>
                 </TouchableOpacity>
 

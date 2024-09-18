@@ -61,6 +61,11 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
 
     return (
         <SafeAreaView style={styles.containerSignUp}>
+            
+            <View style={styles.logo}>
+                <Text style={styles.logoFeat}>Featuring</Text>
+            </View>
+
             {step === 1 && (
                 <View style={styles.formSignUp}>
                     <Text style={styles.label}>First Name</Text>
@@ -204,7 +209,7 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
             <View style={styles.askView}>
                 <Text >
                     Already have an account?{'  '}
-                    <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+                    <TouchableOpacity onPress={() => navigation.navigate('Login')}>
                         <Text style={styles.signUpText}>Sign In</Text>
                     </TouchableOpacity>
                 </Text>

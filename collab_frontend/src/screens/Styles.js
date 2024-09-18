@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
         justifyContent:"start",
         alignItems:"center"
     },
-
+  
 
     label: {
         alignSelf:"start",
@@ -53,7 +53,23 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         borderBlockColor: "black",
         color: "black",
-
+    },
+    inputButtonPassword:{
+        fontSize: 15,
+        width: "100%",
+        borderWidth: 1,
+        padding: 15,
+        borderRadius: 8,
+        borderBlockColor: "black",
+        color: "black",
+    },
+    passwordForget:{
+        position:"relative",
+        display:"flex",
+        justifyContent:"center",
+        alignItems:"flex-end",
+        paddingTop:10,
+        paddingBottom:20,
     },
 
     loginButton: {
@@ -121,7 +137,8 @@ const styles = StyleSheet.create({
     },
     logoFeat: {
         fontSize: 50,
-        fontFamily: 'Pacifico',
+        fontWeight:800,
+        fontFamily: 'SavoyeLetPlain',
     },
     placeholder: {
         color: '#6a6a6a',
