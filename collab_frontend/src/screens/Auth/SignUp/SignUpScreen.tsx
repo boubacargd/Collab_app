@@ -1,12 +1,13 @@
 // src/screens/SignUpScreen.tsx
 import React, { useState, useEffect } from 'react';
-import styles from "../Styles";
-import { SafeAreaView, TouchableOpacity, View, Text, TextInput } from 'react-native';
-import { RootStackParamList } from '../../navigation/types';
+import styles from "../../Styles";
+import { SafeAreaView, TouchableOpacity, View, Text, TextInput, Alert } from 'react-native';
+import { RootStackParamList } from '../../../navigation/types';
 import { StackNavigationProp } from '@react-navigation/stack';
 import RNPickerSelect from 'react-native-picker-select';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/Ionicons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type SignUpScreenNavigationProp = StackNavigationProp<RootStackParamList, 'SignUp'>;
 
@@ -54,16 +55,63 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
         setStep(step - 1);
     };
 
-    const handleSignUp = () => {
-        // Handle form submission
-        console.log('User Data:', { firstName, lastName, email, password, activities, country });
+
+    const handleSignUp = async () => {
+        if (password !== confirmPassword) {
+            Alert.alert("Error", "Passwords do not match.");
+            return;
+        }
+    
+        const userData = {
+            firstName,
+            lastName,
+            email,
+            password,
+            activities,
+            country
+        };
+    
+        try {
+            const response = await axios.post('http://localhost:8080/api/public/signup', userData);
+            console.log("User Data:", userData);
+            console.log('User signed up successfully:', response.data);
+            Alert.alert("Success", "User registered successfully!");
+    
+            const token = response.data.jwtToken; // Récupérer le token JWT depuis la réponse
+    
+            if (token) {
+                await AsyncStorage.setItem('jwt_token', token); // Stocker le token dans AsyncStorage
+                console.log("Token stored successfully");
+    
+                // Naviguer vers AddImgProfil ou une autre page après l'inscription
+                navigation.navigate('AddImgProfil', { email });
+            } else {
+                console.error("No token found in response");
+                Alert.alert("Error", "No token found. Please try again.");
+            }
+    
+        } catch (error) {
+            if (error.response) {
+                console.log('Error status:', error.response.status);
+                console.log('Error data:', error.response.data);
+                console.log('Error headers:', error.response.headers);
+            } else {
+                console.error('Error without response:', error.message);
+            }
+            Alert.alert("Error", "Failed to sign up. Please try again.");
+        }
     };
+    
+    
+    
+    
+    
 
     return (
         <SafeAreaView style={styles.containerSignUp}>
-            
+
             <View style={styles.logo}>
-                <Text style={styles.logoFeat}>Featuring</Text>
+                <Text style={styles.logoFeat}>feat</Text><View style={styles.point}></View>
             </View>
 
             {step === 1 && (
@@ -93,7 +141,7 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
                         style={styles.inputButton}
                     />
                     <View style={styles.navButtons}>
-                        <TouchableOpacity style={styles.button} onPress={handlePreviousStep}>
+                        <TouchableOpacity onPress={handlePreviousStep}>
                             <Icon name="chevron-back-outline" size={23} color="#6a6a6a" />
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.singnUpButton} onPress={handleNextStep}>
@@ -110,11 +158,10 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
                         placeholder="example@gmail.com"
                         placeholderTextColor="#6a6a6a"
                         value={email}
-                        onChangeText={setEmail}
-                        style={styles.inputButton}
+                        onChangeText={(text) => setEmail(text.toLowerCase())} style={styles.inputButton}
                     />
                     <View style={styles.navButtons}>
-                        <TouchableOpacity style={styles.button} onPress={handlePreviousStep}>
+                        <TouchableOpacity onPress={handlePreviousStep}>
                             <Icon name="chevron-back-outline" size={23} color="#6a6a6a" />
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.singnUpButton} onPress={handleNextStep}>
@@ -136,7 +183,7 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
                         style={styles.inputButton}
                     />
                     <View style={styles.navButtons}>
-                        <TouchableOpacity style={styles.button} onPress={handlePreviousStep}>
+                        <TouchableOpacity onPress={handlePreviousStep}>
                             <Icon name="chevron-back-outline" size={23} color="#6a6a6a" />
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.singnUpButton} onPress={handleNextStep}>
@@ -158,7 +205,7 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
                         style={styles.inputButton}
                     />
                     <View style={styles.navButtons}>
-                        <TouchableOpacity style={styles.button} onPress={handlePreviousStep}>
+                        <TouchableOpacity  onPress={handlePreviousStep}>
                             <Icon name="chevron-back-outline" size={23} color="#6a6a6a" />
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.singnUpButton} onPress={handleNextStep}>
@@ -170,9 +217,10 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
 
             {step === 6 && (
                 <View style={styles.formSignUp}>
-                    <Text style={styles.label}>Activities</Text>
+                    <Text style={styles.label}>Your activities</Text>
                     <TextInput
-                        placeholder="Activities"
+                        placeholder="Your activities"
+                        placeholderTextColor="#6a6a6a"
                         value={activities}
                         onChangeText={setActivities}
                         style={styles.inputButton}
@@ -195,7 +243,7 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
                     )}
 
                     <View style={styles.navButtons}>
-                        <TouchableOpacity style={styles.button} onPress={handlePreviousStep}>
+                        <TouchableOpacity onPress={handlePreviousStep}>
                             <Icon name="chevron-back-outline" size={23} color="#6a6a6a" />
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.singnUpButton} onPress={handleSignUp}>
